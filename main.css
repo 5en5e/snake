@@ -1,0 +1,130 @@
+
+#field{
+	display: grid;
+	border: 1px solid black;
+	grid-template-rows: repeat(10, 1fr);
+	grid-template-columns: repeat(10, 1fr);
+	aspect-ratio: 1;
+	font-size: 4vh;
+	user-select: none;
+	background-color: white;
+}
+
+
+#field[gray=""] {
+	filter:grayscale(1);
+}
+
+#field > div[segment] {
+	background-size: 100% 100%;
+}
+
+#field > div[segment="head"] {
+	background-image:url("img/head.svg");
+}
+#field > div[segment="body"] {
+	background-image:url("img/body.svg");
+}
+#field > div[segment="tail"] {
+	background-image:url("img/tail.svg");
+}
+#field > div[segment="turn"] {
+	background-image:url("img/turn.svg");
+}
+
+#field > 
+div[segment="head"][currentDirection="up"],
+div[segment="body"][currentDirection="up"],
+div[segment="tail"][currentDirection="up"] {
+	rotate:0deg;
+}
+
+#field > 
+div[segment="head"][currentDirection="right"],
+div[segment="body"][currentDirection="right"],
+div[segment="tail"][currentDirection="right"] {
+	rotate:90deg;
+}
+
+#field > 
+div[segment="head"][currentDirection="down"],
+div[segment="body"][currentDirection="down"],
+div[segment="tail"][currentDirection="down"] {
+	rotate:180deg;
+}
+
+#field > 
+div[segment="head"][currentDirection="left"],
+div[segment="body"][currentDirection="left"],
+div[segment="tail"][currentDirection="left"] {
+	rotate:270deg;
+}
+
+
+#field > div[segment="turn"][turn="up-left"]    {rotate:0deg;}
+#field > div[segment="turn"][turn="right-down"] {rotate:0deg;}
+#field > div[segment="turn"][turn="down-left"]  {rotate:90deg;}
+#field > div[segment="turn"][turn="right-up"]   {rotate:90deg;}
+#field > div[segment="turn"][turn="down-right"] {rotate:180deg;}
+#field > div[segment="turn"][turn="left-up"]    {rotate:180deg;}
+#field > div[segment="turn"][turn="left-down"]  {rotate:270deg;}
+#field > div[segment="turn"][turn="up-right"]   {rotate:270deg;}
+
+
+
+.wrapper{
+	width: 600px;
+	margin: 0 auto;
+	padding: 10px;
+	background-color: #80808021;
+}
+
+.controls {
+	display: flex;
+	justify-content: space-between;
+	margin-block: 10px;
+	margin-inline: 5px;
+}
+
+#speed-slider{
+	vertical-align: middle;
+}
+
+button{
+	padding: 5px;
+	margin-left: 5px;
+}
+
+#warningText{
+	position: relative;
+	bottom: 350px;
+	text-align: center;
+	font-size: x-large;
+	color: gray;
+	visibility: hidden;
+	height: 0px;
+ 	overflow: visible;
+}
+
+#warningText[show="true"]{
+	visibility: visible;
+}
+
+#winText{
+	position: relative;
+	bottom: 350px;
+	text-align: center;
+	font-size: xxx-large;
+	visibility: hidden;
+	height: 0px;
+ 	overflow: visible;
+}
+
+#winText[show="true"]{
+	visibility: visible;
+}
+
+.win-block{
+	font-size: 0.7em;
+	user-select: none;
+}

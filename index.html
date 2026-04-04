@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<link href="main.css" rel="stylesheet" />
+		<link rel="preload" as="image" href="img/body.svg">
+		<link rel="preload" as="image" href="img/head.svg">
+		<link rel="preload" as="image" href="img/tail.svg">
+		<link rel="preload" as="image" href="img/turn.svg">
+		<script src="main.js" defer></script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<div id="field">
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+				<div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div><div ></div>
+			</div>
+			
+			<div class="controls">
+				<div class="left-controls">
+					<label for="speed-slider">Скорость:</label>
+					<input id="speed-slider" type="range" min="100" max="900" step="100" value="800" autocomplete="off">
+					<div class="win-block">
+						<input type="checkbox" id="win-checkbox" autocomplete="off">
+						<label for="win-checkbox">Выиграть</label>
+					</div>
+				</div>
+				
+				<div class="right-controls">
+					<button id="pauseStart">Пауза</button>
+					<button id="newGame">Заново</button>
+				</div>
+			</div>
+			<div id="warningText" show="false">Стрелки работать не будут - окно не в фокусе</div>
+			<div id="winText" show="false">Вы выиграли! 🏆</div>
+		</div>
+	</body>
+</html>
