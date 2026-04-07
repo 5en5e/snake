@@ -33,44 +33,38 @@
 }
 
 #field > 
-div[segment="head"][currentDirection="up"],
-div[segment="body"][currentDirection="up"],
-div[segment="tail"][currentDirection="up"] {
+div[segment][currentDirection="up"] {
 	rotate:0deg;
 }
 
 #field > 
-div[segment="head"][currentDirection="right"],
-div[segment="body"][currentDirection="right"],
-div[segment="tail"][currentDirection="right"] {
+div[segment][currentDirection="right"] {
 	rotate:90deg;
 }
 
 #field > 
-div[segment="head"][currentDirection="down"],
-div[segment="body"][currentDirection="down"],
-div[segment="tail"][currentDirection="down"] {
+div[segment][currentDirection="down"] {
 	rotate:180deg;
 }
 
 #field > 
-div[segment="head"][currentDirection="left"],
-div[segment="body"][currentDirection="left"],
-div[segment="tail"][currentDirection="left"] {
+div[segment][currentDirection="left"] {
 	rotate:270deg;
 }
 
 
-#field > div[segment="turn"][turn="up-left"]    {rotate:0deg;}
-#field > div[segment="turn"][turn="right-down"] {rotate:0deg;}
-#field > div[segment="turn"][turn="down-left"]  {rotate:90deg;}
-#field > div[segment="turn"][turn="right-up"]   {rotate:90deg;}
-#field > div[segment="turn"][turn="down-right"] {rotate:180deg;}
-#field > div[segment="turn"][turn="left-up"]    {rotate:180deg;}
-#field > div[segment="turn"][turn="left-down"]  {rotate:270deg;}
-#field > div[segment="turn"][turn="up-right"]   {rotate:270deg;}
-
-
+#field > div[segment="turn"]:is([turn="up-left"],[turn="right-down"]) {
+	rotate:0deg;
+}
+#field > div[segment="turn"]:is([turn="down-left"],[turn="right-up"])  {
+	rotate:90deg;
+}
+#field > div[segment="turn"]:is([turn="down-right"],[turn="left-up"]) {
+	rotate:180deg;
+}
+#field > div[segment="turn"]:is([turn="left-down"],[turn="up-right"])  {
+	rotate:270deg;
+}
 
 .wrapper{
 	width: 600px;

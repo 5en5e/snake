@@ -1,6 +1,8 @@
 const size=10;
 let snake;
 let allCells;
+let allCellElements;
+let cellWithFood;
 let currentDirection;
 let newDirection;
 let intervalId;
@@ -10,6 +12,16 @@ const foods=["🍇","🍈","🍉","🍊","🍋","🍌","🍍","🥭","🍎","�
 	"🌮","🌯","🫔","🥙","🧆","🥚","🥗","🍿","🍚","🍛","🍠","🍣","🍤","🍥","🥮","🍡","🥟","🥠",
 	"🦀","🦞","🦐","🦑","🍦","🍧","🍨","🍩","🍪","🎂","🍰","🧁","🥧","🍫","🍬","🍭","🍮","🍯",
 	"🥛"];
+
+
+function generateCells(){
+	const field = document.querySelector("#field");
+	for (i=0; i<size*size; i++){
+		let cell=document.createElement("div");
+		field.appendChild(cell);
+	}
+	allCellElements = Array.from(document.querySelectorAll(`#field > div`));
+}
 
 function setColor(c){
 	const cont=document.querySelector("#field");
@@ -66,12 +78,7 @@ function sameCell(a,b){
 }
 
 function cellIsSnake(cell){
-	for (let i=0; i<snake.length; i++){
-		if (sameCell(snake[i], cell)){
-			return true;
-		}
-	}
-	return false;
+	return snake.some(segment=>sameCell(segment, cell));
 }
 
 function sameOrOppositeDirections(cd,nd){
@@ -97,8 +104,8 @@ function sameOrOppositeDirections(cd,nd){
 }
 
 function getCellByCoords(coords){
-	const num = coords.x + (coords.y-1)*size;
-	const cell = document.querySelector(`#field > :nth-child(${num})`);
+	const index = (coords.x-1) + (coords.y-1)*size;
+	const cell = allCellElements[index];
 	return cell;
 }
 
@@ -125,18 +132,16 @@ function getRandomInt(max) {
 }
 
 function placeNewFood(){
-	//получить набор свободных клеток
 	freeCells=allCells.filter((cell)=>!cellIsSnake(cell));
 	if (freeCells.length==0){
 		document.querySelector("#winText").setAttribute("show","true");
 		return;
 	}
-	//найти случайное число в диапазоне
+
 	randomIndex=getRandomInt(freeCells.length);
 	newFoodCell=freeCells[randomIndex];
 
 
-	//расположить пищу на соответствующей ячейке
 	getCellByCoords(newFoodCell).setAttribute("food","");
 	getCellByCoords(newFoodCell).textContent=foods[getRandomInt(foods.length)];
 }
@@ -304,9 +309,9 @@ document.querySelector("#speed-slider").addEventListener("change", (event) => {
 	}
 	val=event.target.value;
 	speed=1000 - val;
-  clearInterval(intervalId);
-  intervalId = window.setInterval(move, speed);
-  event.target.blur();
+	clearInterval(intervalId);
+	intervalId = window.setInterval(move, speed);
+	event.target.blur();
 });
 
 document.querySelector("#win-checkbox").addEventListener("click", (event) => {
@@ -318,19 +323,23 @@ document.addEventListener('keydown', (e) => {
 		return;
 	}
 
-  if (e.key === 'ArrowUp') {
-    newDirection="up";
-  }
-  if (e.key === 'ArrowDown') {
-    newDirection="down";
-  }
-  if (e.key === 'ArrowLeft') {
-    newDirection="left";
-  }
-  if (e.key === 'ArrowRight') {
-    newDirection="right";
-  }
+	if (e.key === 'ArrowUp') {
+	  newDirection="up";
+	}
+	else if (e.key === 'ArrowDown') {
+	  newDirection="down";
+	}
+	else if (e.key === 'ArrowLeft') {
+	  newDirection="left";
+	}
+	else if (e.key === 'ArrowRight') {
+	  newDirection="right";
+	}
+	
+	if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)) {
+    	e.preventDefault();
+  	}
 });
 
-
+generateCells();
 init();
