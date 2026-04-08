@@ -6,6 +6,7 @@ let cellWithFood;
 let currentDirection;
 let newDirection;
 let intervalId;
+let winChecked;
 const foods=["🍇","🍈","🍉","🍊","🍋","🍌","🍍","🥭","🍎","🍏","🍐","🍑","🍒","🍓","🫐","🥝",
 	"🍅","🫒","🥥","🥑","🍆","🥔","🥕","🌽","🌶","🫑","🥒","🥬","🥦","🧄","🧅","🍄","🥜","🌰",
 	"🍞","🥐","🥖","🫓","🥨","🥯","🥞","🧇","🧀","🍖","🍗","🥩","🥓","🍔","🍟","🍕","🌭","🥪",
@@ -16,7 +17,7 @@ const foods=["🍇","🍈","🍉","🍊","🍋","🍌","🍍","🥭","🍎","�
 
 function generateCells(){
 	const field = document.querySelector("#field");
-	for (i=0; i<size*size; i++){
+	for (let i=0; i<size*size; i++){
 		let cell=document.createElement("div");
 		field.appendChild(cell);
 	}
@@ -71,6 +72,8 @@ function init(){
 }
 
 function sameCell(a,b){
+	if (a===null || b===null) {return false;}
+
 	if (a.x==b.x && a.y==b.y){
 		return true;
 	}
@@ -85,7 +88,7 @@ function sameOrOppositeDirections(cd,nd){
 	if (cd==nd) {
 		return true;
 	}
-
+	let res;
 	switch (cd){
 	case "up":
 		res = nd=="down" ? true : false;
@@ -134,23 +137,23 @@ function getRandomInt(max) {
 function placeNewFood(){
 	freeCells=allCells.filter((cell)=>!cellIsSnake(cell));
 	if (freeCells.length==0){
+		cellWithFood=null;
 		document.querySelector("#winText").setAttribute("show","true");
 		return;
 	}
 
-	randomIndex=getRandomInt(freeCells.length);
-	newFoodCell=freeCells[randomIndex];
+	let randomIndex=getRandomInt(freeCells.length);
+	cellWithFood=freeCells[randomIndex];
 
-
-	getCellByCoords(newFoodCell).setAttribute("food","");
-	getCellByCoords(newFoodCell).textContent=foods[getRandomInt(foods.length)];
+	getCellByCoords(cellWithFood).setAttribute("food","");
+	getCellByCoords(cellWithFood).textContent=foods[getRandomInt(foods.length)];
 }
 
-function move(){	
-	let turn=undefined;
-	let head=snake[0];
-	let win =document.querySelector("#win-checkbox").checked;
-	if (win){
+
+function updateDirection(){
+	let turn = undefined;
+	let head = snake[0];
+	if (winChecked){
 		if (head.y==1) {
 			if(currentDirection=="up") {
 				newDirection="right";
@@ -173,12 +176,15 @@ function move(){
 			}	
 		}
 	}
-
 	if (!sameOrOppositeDirections(currentDirection, newDirection)){
 		turn=`${currentDirection}-${newDirection}`;
 		currentDirection=newDirection;
 	}
+	return turn;
+}
 
+function getNewHead(){
+	let head=snake[0];
 	let x = head.x;
 	let y = head.y;
 	switch (currentDirection){
@@ -195,82 +201,110 @@ function move(){
 		x = decrement(x);
 		break;
 	}
-	const newHead={x:x, y:y};
+	return {x:x, y:y};
+}
 
-	let stop;
-	if (cellIsSnake(newHead) && !sameCell(newHead, snake[snake.length-1])){
-		stop=true;
-	}
-	
-	if (turn){
-		getCellByCoords(head).setAttribute("segment","turn");
-		getCellByCoords(head).setAttribute("turn",`${turn}`);
-	} else{
-		getCellByCoords(head).setAttribute("segment","body");
-		getCellByCoords(head).setAttribute("currentDirection",`${currentDirection}`);
-	}
-	
+function move(){	
+
+	let turn = updateDirection();
+
+	const newHead = getNewHead();	
 	snake.unshift(newHead);
 
-	getCellByCoords(newHead).setAttribute("segment","head");
-	getCellByCoords(newHead).setAttribute("currentDirection",`${currentDirection}`);
-
-	if (getCellByCoords(newHead).hasAttribute("food")) {
-		getCellByCoords(newHead).removeAttribute("food");
-		getCellByCoords(newHead).textContent="";
+	if (eatFood()) {
 		placeNewFood();
 	} else {
-
-		const tail=snake.pop();
-		if (getCellByCoords(tail) != getCellByCoords(snake[0])){
-			getCellByCoords(tail).removeAttribute("segment");
-			getCellByCoords(tail).removeAttribute("turn");	
-		}
-
-
-		let last = getCellByCoords(snake[snake.length-1]);
-		let turn;
-		if (last.getAttribute("segment") == "turn"){
-			turn=last.getAttribute("turn");
-		}
-
-		last.setAttribute("segment","tail");
-		let direction;
-		if (turn){
-			switch(turn){
-				case "up-left":
-				case "down-left":  
-					direction="left";
-					break; 
-				case "right-up": 
-				case "left-up":
-					direction="up";
-					break; 
-				case "right-down":
-				case "left-down":
-					direction="down";
-					break; 
-				case "down-right": 
-				case "up-right":
-					direction="right";
-					break; 
-			}
-			last.setAttribute("currentDirection",`${direction}`);	
-		}
-
+		updateTail();
 	}
-	if (stop){
-		getCellByCoords(newHead).setAttribute("segment","head");
-		getCellByCoords(newHead).setAttribute("currentDirection",`${currentDirection}`);
-		clearInterval(intervalId);
-		document.querySelector("#pauseStart").setAttribute("disabled","");
-		document.querySelector("#speed-slider").setAttribute("disabled","");
-		setColor("gray");
-		document.querySelector("#winText").setAttribute("show","false");
-		return;
+	
+	updateHead(turn);
+
+	if (isCollision()){
+		loss();
 	}		
 }
 
+function loss(){
+	clearInterval(intervalId);
+	document.querySelector("#pauseStart").setAttribute("disabled","");
+	document.querySelector("#speed-slider").setAttribute("disabled","");
+	setColor("gray");
+	document.querySelector("#winText").setAttribute("show","false");
+}
+
+
+function eatFood(){
+	let head = snake[0];
+	if (sameCell(head,cellWithFood)){
+		getCellByCoords(head).removeAttribute("food");
+		getCellByCoords(head).textContent="";
+		return true;
+	}
+	return false;
+}
+
+
+function updateHead(turn){
+	let head=snake[0];
+	let neck=snake[1];
+	if (turn){
+		getCellByCoords(neck).setAttribute("segment","turn");
+		getCellByCoords(neck).setAttribute("turn",`${turn}`);
+	} else{
+		getCellByCoords(neck).setAttribute("segment","body");
+		getCellByCoords(neck).setAttribute("currentDirection",`${currentDirection}`);
+	}
+	getCellByCoords(head).setAttribute("segment","head");
+	getCellByCoords(head).setAttribute("currentDirection",`${currentDirection}`);
+}
+
+function updateTail(){
+	const tail=snake.pop();
+	if (getCellByCoords(tail) != getCellByCoords(snake[0])){
+		getCellByCoords(tail).removeAttribute("segment");
+		getCellByCoords(tail).removeAttribute("turn");	
+	}
+	let last = getCellByCoords(snake[snake.length-1]);
+	let turn;
+	if (last.getAttribute("segment") == "turn"){
+		turn=last.getAttribute("turn");
+	}
+	last.setAttribute("segment","tail");
+	let direction;
+	if (turn){
+		switch(turn){
+			case "up-left":
+			case "down-left":  
+				direction="left";
+				break; 
+			case "right-up": 
+			case "left-up":
+				direction="up";
+				break; 
+			case "right-down":
+			case "left-down":
+				direction="down";
+				break; 
+			case "down-right": 
+			case "up-right":
+				direction="right";
+				break; 
+		}
+		last.setAttribute("currentDirection",`${direction}`);	
+	}
+}
+
+
+
+function isCollision(){
+	let head=snake[0];
+	for (let i=1; i<snake.length; i++){
+		if (sameCell(head, snake[i])) {
+			return true;
+		}
+	}
+	return false;
+}
 
 window.addEventListener('blur', () => {
     document.querySelector("#warningText").setAttribute("show","true");;
@@ -315,7 +349,8 @@ document.querySelector("#speed-slider").addEventListener("change", (event) => {
 });
 
 document.querySelector("#win-checkbox").addEventListener("click", (event) => {
-  event.target.blur();
+	winChecked=event.target.checked;
+	event.target.blur();
 });
 
 document.addEventListener('keydown', (e) => {
