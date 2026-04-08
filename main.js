@@ -259,8 +259,9 @@ function updateHead(turn){
 }
 
 function updateTail(){
+	let head = snake[0];
 	const tail=snake.pop();
-	if (getCellByCoords(tail) != getCellByCoords(snake[0])){
+	if (getCellByCoords(tail) != getCellByCoords(head)){
 		getCellByCoords(tail).removeAttribute("segment");
 		getCellByCoords(tail).removeAttribute("turn");	
 	}
