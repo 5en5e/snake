@@ -37,7 +37,7 @@ function init(){
 	
 	for (let i=1; i<=size; i++){
 		for (let j=1; j<=size; j++){
-			cell={x:i, y:j};
+			let cell={x:i, y:j};
 			allCells.push(cell);
 		}
 	}
@@ -54,7 +54,7 @@ function init(){
 	})
 
 	for (let j=0; j<snake.length; j++){
-			el=document.querySelector(`#field > :nth-child(${j*size + 1})`);
+			let el=document.querySelector(`#field > :nth-child(${j*size + 1})`);
 			if (j==0){
 				el.setAttribute("segment","head");
 			}
@@ -135,7 +135,7 @@ function getRandomInt(max) {
 }
 
 function placeNewFood(){
-	freeCells=allCells.filter((cell)=>!cellIsSnake(cell));
+	let freeCells=allCells.filter((cell)=>!cellIsSnake(cell));
 	if (freeCells.length==0){
 		cellWithFood=null;
 		document.querySelector("#winText").setAttribute("show","true");
@@ -342,8 +342,8 @@ document.querySelector("#speed-slider").addEventListener("change", (event) => {
 	if (document.querySelector("#pauseStart").innerText=="Старт"){
 		return;
 	}
-	val=event.target.value;
-	speed=1000 - val;
+	let val=event.target.value;
+	let speed=1000 - val;
 	clearInterval(intervalId);
 	intervalId = window.setInterval(move, speed);
 	event.target.blur();
